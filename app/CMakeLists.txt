@@ -16,9 +16,14 @@ include_directories(
     src/main/cpp/darknet/include/
 )
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC -fopenmp -O3 -fstrict-aliasing -fprefetch-loop-arrays -mfpu=neon -DHAVE_NEON=1")
+set(CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -lm -pthread")
+
+file(GLOB darknet_files "src/main/cpp/darknet/src/*.c")
+
 set(DARKNET_SRC_LISTS
-    src/main/cpp/darknet/src/box.c
-    src/main/cpp/darknetlib.cpp
+    ${darknet_files}
+    src/main/cpp/darknetlib.c
 )
 
 add_library( # Sets the name of the library.

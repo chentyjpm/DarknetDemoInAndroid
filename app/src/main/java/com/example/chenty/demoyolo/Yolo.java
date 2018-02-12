@@ -2,46 +2,49 @@ package com.example.chenty.demoyolo;
 
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.ImageView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.os.Handler;
+import android.os.Message;
+
+
 public class Yolo extends AppCompatActivity {
 
+    ImageView srcimg;
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("darknetlib");
     }
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_yolo);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        srcimg = (ImageView) findViewById(R.id.srcimg);
+        yoloDetect();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_yolo, menu);
         return true;
     }
 
@@ -60,9 +63,22 @@ public class Yolo extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void yoloDetect(){
+
+        new Thread(new Runnable() {
+            public void run() {
+
+                testyolo("a","b", "c");
+
+                mHandler.sendEmptyMessage(1);
+            }
+        }).start();
+
+    }
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
+    public native void inityolo(String cfgfile, String weightfile);
+    public native void testyolo(String cfgfile, String weightfile, String imgfile);
 }
