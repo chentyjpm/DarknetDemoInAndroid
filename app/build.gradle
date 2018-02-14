@@ -1,24 +1,38 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        chenty {
+            keyAlias 'chenty'
+            keyPassword 'a801162'
+            storeFile file('/data/android/sign/chenty.jks')
+            storePassword 'aa801162'
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.example.chenty.demoyolo"
-        minSdkVersion 19
+        minSdkVersion 24
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++11 -frtti -fexceptions"
+                cFlags "-std=c99 -fopenmp  -DOMP_NUM_THREADS=8"
+                arguments "-DANDROID_TOOLCHAIN=gcc"
+                cppFlags "-std=c++11 -frtti -fexceptions -fopenmp"
             }
         }
+        signingConfig signingConfigs.chenty
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.chenty
+        }
+        debug {
         }
     }
     externalNativeBuild {
@@ -26,10 +40,13 @@ android {
             path "CMakeLists.txt"
         }
     }
+    productFlavors {
+    }
+    buildToolsVersion '27.0.3'
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:design:26.1.0'

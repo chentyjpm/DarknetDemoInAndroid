@@ -1,27 +1,31 @@
 #include <jni.h>
 #include "darknet.h"
 
+#include <android/bitmap.h>
+#include <android/asset_manager_jni.h>
+#include <android/asset_manager.h>
 
-#include <android/log.h>
-#define TAG "darknetlib"
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG,__VA_ARGS__)
+#define true JNI_TRUE
+#define false JNI_FALSE
+
+
 
 //define global param for thread
 
 char *voc_names[] = {"aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"};
 
-void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen)
+double test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen)
 {
-
     LOGD("data=%s",datacfg);
     LOGD("cfg=%s",cfgfile);
     LOGD("wei=%s",weightfile);
     LOGD("img=%s",filename);
 
-
-    list *options = read_data_cfg(datacfg);
-    char *name_list = option_find_str(options, "names", "data/names.list");
+    //list *options = read_data_cfg(datacfg);
+    char *name_list = "/sdcard/yolo/data/voc.names";//option_find_str(options, "names", "data/names.list");
     char **names = get_labels(name_list);
+
+
 
     image **alphabet = load_alphabet();
     network *net = load_network(cfgfile, weightfile, 0);
@@ -39,7 +43,7 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
             printf("Enter Image Path: ");
             fflush(stdout);
             input = fgets(input, 256, stdin);
-            if(!input) return;
+            if(!input) return 0;
             strtok(input, "\n");
         }
         image im = load_image_color(input,0,0);
@@ -62,7 +66,8 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         float *X = sized.data;
         time=what_time_is_it_now();
         network_predict(net, X);
-        printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
+        time = what_time_is_it_now()-time;
+        LOGD("%s: Predicted in %f seconds.\n", input, time);
         get_region_boxes(l, im.w, im.h, net->w, net->h, thresh, probs, boxes, masks, 0, 0, hier_thresh, 1);
         //if (nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
@@ -87,8 +92,11 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         free_image(sized);
         free(boxes);
         free_ptrs((void **)probs, l.w*l.h*l.n);
-        if (filename) break;
+        free_network(net);
+        if (filename)
+            break;
     }
+    return time;
 }
 
 void
@@ -105,29 +113,68 @@ Java_com_example_chenty_demoyolo_Yolo_inityolo(JNIEnv *env, jobject obj, jstring
     return;
 }
 
-void
+jdouble
 JNICALL
-Java_com_example_chenty_demoyolo_Yolo_testyolo(JNIEnv *env, jobject obj, jstring cfgfile, jstring weightfile, jstring imgfile)
+Java_com_example_chenty_demoyolo_Yolo_testyolo(JNIEnv *env, jobject obj, jstring imgfile)
 {
-//    const char *cfgfile_str = (*env)->GetStringUTFChars(env, cfgfile, 0);
-//    const char *weightfile_str = (*env)->GetStringUTFChars(env, weightfile, 0);
-//    const char *imgfile_str = (*env)->GetStringUTFChars(env, imgfile, 0);
+    double time;
+    const char *imgfile_str = (*env)->GetStringUTFChars(env, imgfile, 0);
 
-    char *datacfg_str = "/sdcard/cfg/voc.data";
-    char *cfgfile_str = "/sdcard/cfg/tiny-yolo-voc.cfg";
-    char *weightfile_str = "/sdcard/tiny-yolo-voc.weights";
-    char *imgfile_str = "/sdcard/data/dog.jpg";
-    char *outimgfile_str = "/sdcard/out.jpg";
+    char *datacfg_str = "/sdcard/yolo/cfg/voc.data";
+    char *cfgfile_str = "/sdcard/yolo/cfg/tiny-yolo-voc.cfg";
+    char *weightfile_str = "/sdcard/yolo/weights/tiny-yolo-voc.weights";
+    //char *imgfile_str = "/sdcard/yolo/data/dog.jpg";
+    char *outimgfile_str = "/sdcard/yolo/out";
 
-    LOGD("namecfg= %s", datacfg_str);
-
-    test_detector(datacfg_str, cfgfile_str,
+    time = test_detector(datacfg_str, cfgfile_str,
                   weightfile_str, imgfile_str,
-                  0.5f, 0.5f, outimgfile_str, 0);
+                  0.2f, 0.5f, outimgfile_str, 0);
 
-//    (*env)->ReleaseStringUTFChars(env, cfgfile, cfgfile_str);
-//    (*env)->ReleaseStringUTFChars(env, weightfile, weightfile_str);
-//    (*env)->ReleaseStringUTFChars(env, imgfile, imgfile_str);
-    return;
+    (*env)->ReleaseStringUTFChars(env, imgfile, imgfile_str);
+    return time;
 }
 
+jboolean
+JNICALL
+Java_com_example_chenty_demoyolo_Yolo_detectimg(JNIEnv *env, jobject obj, jobject dst, jobject src)
+{
+    AndroidBitmapInfo srcInfo, dstInfo;
+    if (ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_getInfo(env, src, &srcInfo)
+        || ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_getInfo(env, dst, &dstInfo)) {
+        LOGE("get bitmap info failed");
+        return false;
+    }
+
+    void *srcBuf, *dstBuf;
+    if (ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_lockPixels(env, src, &srcBuf)) {
+        LOGE("lock src bitmap failed");
+        return false;
+    }
+
+    if (ANDROID_BITMAP_RESULT_SUCCESS != AndroidBitmap_lockPixels(env, dst, &dstBuf)) {
+        LOGE("lock dst bitmap failed");
+        return false;
+    }
+
+    int w = srcInfo.width;
+    int h = srcInfo.height;
+    int32_t *srcPixs = (int32_t *) srcBuf;
+    int32_t *desPixs = (int32_t *) dstBuf;
+    int alpha = 0xFF << 24;
+    for (int i = 0; i < h; i++) {
+        for (int j = 0; j < w; j++) {
+            // 获得像素的颜色
+            int color = srcPixs[w * i + j];
+            int red = ((color & 0x00FF0000) >> 16);
+            int green = ((color & 0x0000FF00) >> 8);
+            int blue = color & 0x000000FF;
+            color = (red + green + blue) / 3;
+            color = alpha | (color << 16) | (color << 8) | color;
+            desPixs[w * i + j] = color;
+        }
+    }
+
+    AndroidBitmap_unlockPixels(env, src);
+    AndroidBitmap_unlockPixels(env, dst);
+    return 1;
+}

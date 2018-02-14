@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">DemoYolo</string>
     <string name="action_settings">Settings</string>
+    <string name="capture">capture</string>
+    <string name="analyse">anslyse</string>
+    <string name="exactres">exactres</string>
+    <string name="selectimg" >selectimg</string>
+    <string name="copyright">Demo by chenty use darknet yolo-tiny</string>
+    <string name="tip_start">Please Exact First</string>
+    <string name="contactme">about</string>
 </resources>

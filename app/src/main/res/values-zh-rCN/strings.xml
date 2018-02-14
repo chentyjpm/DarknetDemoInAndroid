@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">Yolo测试</string>
+    <string name="action_settings">设置</string>
+    <string name="capture">采集</string>
+    <string name="analyse">分析</string>
+    <string name="exactres">解压模型</string>
+    <string name="selectimg">选择图片</string>
+    <string name="tip_start">第一次运行请解压模型</string>
+    <string name="copyright">Demo by chenty  use darknet yolo-tiny</string>
+    <string name="contactme">关于</string>
+</resources>
