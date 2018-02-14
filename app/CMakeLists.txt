@@ -16,7 +16,7 @@ include_directories(
     src/main/cpp/darknet/include/
 )
 
-#do not use openmp calc err
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC")
 #neno opt
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -O3 -fstrict-aliasing -fprefetch-loop-arrays")
