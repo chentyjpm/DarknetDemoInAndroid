@@ -14,6 +14,7 @@
 
 char *voc_names[] = {"aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"};
 
+//rewrite test demo for android
 double test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen)
 {
     LOGD("data=%s",datacfg);
@@ -99,6 +100,9 @@ double test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filen
     return time;
 }
 
+
+//Todo:
+// use init and detect to process camera
 void
 JNICALL
 Java_com_example_chenty_demoyolo_Yolo_inityolo(JNIEnv *env, jobject obj, jstring cfgfile, jstring weightfile)
@@ -113,6 +117,8 @@ Java_com_example_chenty_demoyolo_Yolo_inityolo(JNIEnv *env, jobject obj, jstring
     return;
 }
 
+//test demo
+// process imgfile to /sdcard/yolo/out
 jdouble
 JNICALL
 Java_com_example_chenty_demoyolo_Yolo_testyolo(JNIEnv *env, jobject obj, jstring imgfile)
@@ -134,6 +140,9 @@ Java_com_example_chenty_demoyolo_Yolo_testyolo(JNIEnv *env, jobject obj, jstring
     return time;
 }
 
+
+//Todo:
+// finish detectimg with camera
 jboolean
 JNICALL
 Java_com_example_chenty_demoyolo_Yolo_detectimg(JNIEnv *env, jobject obj, jobject dst, jobject src)
@@ -156,23 +165,6 @@ Java_com_example_chenty_demoyolo_Yolo_detectimg(JNIEnv *env, jobject obj, jobjec
         return false;
     }
 
-    int w = srcInfo.width;
-    int h = srcInfo.height;
-    int32_t *srcPixs = (int32_t *) srcBuf;
-    int32_t *desPixs = (int32_t *) dstBuf;
-    int alpha = 0xFF << 24;
-    for (int i = 0; i < h; i++) {
-        for (int j = 0; j < w; j++) {
-            // 获得像素的颜色
-            int color = srcPixs[w * i + j];
-            int red = ((color & 0x00FF0000) >> 16);
-            int green = ((color & 0x0000FF00) >> 8);
-            int blue = color & 0x000000FF;
-            color = (red + green + blue) / 3;
-            color = alpha | (color << 16) | (color << 8) | color;
-            desPixs[w * i + j] = color;
-        }
-    }
 
     AndroidBitmap_unlockPixels(env, src);
     AndroidBitmap_unlockPixels(env, dst);

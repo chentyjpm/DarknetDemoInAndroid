@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.ImageView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.ActivityCompat;
 
-import android.view.Menu;
 import android.view.MenuItem;
 
 import android.os.Handler;
