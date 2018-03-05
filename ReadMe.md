@@ -1,4 +1,4 @@
-#Darknet yolo 在 android studio上的移植和实现
+# Darknet yolo 在 android studio上的移植和实现
 
 ## 假期无事 跑了一下darknetyolo 看起来效果不错 经过一系列不懈优化 终于跑到1秒内了
 
