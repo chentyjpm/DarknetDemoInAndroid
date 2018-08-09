@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Yolo测试</string>
+    <string name="app_name">YoloV3测试</string>
     <string name="action_settings">设置</string>
     <string name="capture">采集</string>
     <string name="analyse">分析</string>

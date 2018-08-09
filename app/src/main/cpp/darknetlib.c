@@ -132,8 +132,8 @@ Java_com_example_chenty_demoyolo_Yolo_testyolo(JNIEnv *env, jobject obj, jstring
     const char *imgfile_str = (*env)->GetStringUTFChars(env, imgfile, 0);
 
     char *datacfg_str = "/sdcard/yolo/cfg/voc.data";
-    char *cfgfile_str = "/sdcard/yolo/cfg/tiny-yolo-voc.cfg";
-    char *weightfile_str = "/sdcard/yolo/weights/tiny-yolo-voc.weights";
+    char *cfgfile_str = "/sdcard/yolo/cfg/yolov3-tiny.cfg";
+    char *weightfile_str = "/sdcard/yolo/weights/yolov3-tiny.weights";
     //char *imgfile_str = "/sdcard/yolo/data/dog.jpg";
     char *outimgfile_str = "/sdcard/yolo/out";
 
