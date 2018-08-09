@@ -25,7 +25,7 @@ double test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filen
     LOGD("img=%s",filename);
 
     //list *options = read_data_cfg(datacfg);
-    char *name_list = "/sdcard/yolo/data/voc.names";//option_find_str(options, "names", "data/names.list");
+    char *name_list = "/sdcard/yolo/data/coco.names";//option_find_str(options, "names", "data/names.list");
     char **names = get_labels(name_list);
 
 
@@ -131,7 +131,7 @@ Java_com_example_chenty_demoyolo_Yolo_testyolo(JNIEnv *env, jobject obj, jstring
     double time;
     const char *imgfile_str = (*env)->GetStringUTFChars(env, imgfile, 0);
 
-    char *datacfg_str = "/sdcard/yolo/cfg/voc.data";
+    char *datacfg_str = "/sdcard/yolo/cfg/coco.data";
     char *cfgfile_str = "/sdcard/yolo/cfg/yolov3-tiny.cfg";
     char *weightfile_str = "/sdcard/yolo/weights/yolov3-tiny.weights";
     //char *imgfile_str = "/sdcard/yolo/data/dog.jpg";
