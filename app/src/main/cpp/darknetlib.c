@@ -5,6 +5,8 @@
 #include <android/asset_manager_jni.h>
 #include <android/asset_manager.h>
 
+
+
 #define true JNI_TRUE
 #define false JNI_FALSE
 
@@ -69,10 +71,13 @@ double test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filen
         network_predict(net, X);
         time = what_time_is_it_now()-time;
         LOGD("%s: Predicted in %f seconds.\n", input, time);
-        get_region_boxes(l, im.w, im.h, net->w, net->h, thresh, probs, boxes, masks, 0, 0, hier_thresh, 1);
+        int nboxes = 0;
+        detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, &nboxes);
+        //printf("%d\n", nboxes);
         //if (nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
-        if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
-        draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, masks, names, alphabet, l.classes);
+        if (nms) do_nms_sort(dets, nboxes, l.classes, nms);
+        draw_detections(im, dets, nboxes, thresh, names, alphabet, l.classes);
+        free_detections(dets, nboxes);
         if(outfile){
             save_image(im, outfile);
         }
