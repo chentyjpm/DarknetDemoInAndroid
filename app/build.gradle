@@ -33,6 +33,8 @@ android {
             signingConfig signingConfigs.chenty
         }
         debug {
+            debuggable false
+            minifyEnabled false
         }
     }
     externalNativeBuild {
