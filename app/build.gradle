@@ -4,9 +4,9 @@ android {
     signingConfigs {
         chenty {
             keyAlias 'chenty'
-            keyPassword 'a801162'
+            keyPassword ''
             storeFile file('/data/android/sign/chenty.jks')
-            storePassword 'aa801162'
+            storePassword ''
         }
     }
     compileSdkVersion 26
