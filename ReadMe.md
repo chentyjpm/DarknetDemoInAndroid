@@ -4,6 +4,10 @@
 
 更新darknet 到 V3 速度增加了0.1s
 
+
+![](http://www.chenty.com/wp-content/uploads/2018/08/1-576x1024.gif)
+![](http://www.chenty.com/wp-content/uploads/2018/08/2-576x1024.jpg)
+
 ## TODO
 
 1.增加实时调用摄像头 进行分析的功能
